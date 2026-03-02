@@ -1,0 +1,63 @@
+sources:
+  restaurant-db:
+    kind: cloud-sql-postgres
+    project: ${GOOGLE_CLOUD_PROJECT}
+    region: ${REGION}
+    instance: restaurant-db
+    database: restaurant_db
+    user: postgres
+    password: ${DB_PASSWORD}
+
+tools:
+  search_menu:
+    kind: postgres-sql
+    source: restaurant-db
+    description: >
+      Search menu items by keyword matching against name, category, or description.
+      Use this for specific searches like "salmon" or "appetizers."
+    statement: |
+      SELECT name, category, description, price, dietary_tags
+      FROM menu_items
+      WHERE name ILIKE '%' || $1 || '%'
+         OR category ILIKE '%' || $1 || '%'
+         OR description ILIKE '%' || $1 || '%'
+      LIMIT 10
+    parameters:
+      - name: query
+        type: string
+        description: Search term for menu items.
+
+  semantic_search_menu:
+    kind: postgres-sql
+    source: restaurant-db
+    description: >
+      Search menu items using semantic similarity via vector embeddings.
+      Use this for natural language queries like "something spicy" or
+      "a light and refreshing dish." Preferred over keyword search for
+      descriptive or vague requests.
+    statement: |
+      SELECT name, category, description, price, dietary_tags,
+             1 - (embedding <=> embedding('gemini-embedding-001', $1)::vector) AS similarity
+      FROM menu_items
+      WHERE embedding IS NOT NULL
+      ORDER BY embedding <=> embedding('gemini-embedding-001', $1)::vector
+      LIMIT 5
+    parameters:
+      - name: query
+        type: string
+        description: Natural language description of the type of food the user is looking for.
+
+  get_menu_by_category:
+    kind: postgres-sql
+    source: restaurant-db
+    description: >
+      Get all menu items in a specific category (appetizers, entrees, desserts, drinks).
+    statement: |
+      SELECT name, category, description, price, dietary_tags
+      FROM menu_items
+      WHERE category ILIKE $1
+      ORDER BY name
+    parameters:
+      - name: category
+        type: string
+        description: The menu category (e.g., appetizers, entrees, desserts, drinks).

@@ -1,0 +1,12 @@
+[project]
+name = "sdd-adk-agents-agy"
+version = "0.1.0"
+description = "Restaurant Concierge — ADK Agent with SDD Workflows"
+requires-python = ">=3.12"
+dependencies = [
+    "google-adk>=1.0.0",
+    "toolbox-core>=0.1.0",
+    "google-genai>=1.0.0",
+    "cloud-sql-python-connector[pg8000]>=1.0.0",
+    "uvicorn>=0.30.0",
+]

@@ -1,0 +1,139 @@
+# MCP Toolbox Configuration Example (Codelab 5 Pattern)
+#
+# Defines database tools declaratively — no database code in the agent.
+# Toolbox handles connection pooling, parameterized queries, and auth.
+#
+# Key features demonstrated:
+# - Data source connection (Cloud SQL PostgreSQL)
+# - Standard SQL query tools (keyword search, detail lookup)
+# - Embedding model resource for vector operations
+# - Semantic search with embeddedBy (auto-embeds search queries)
+# - Vector ingestion on write with valueFromParam + embeddedBy
+#
+# Reference: https://codelabs.developers.google.com/agentic-rag-toolbox-cloudsql
+
+# --- Data Source ---
+kind: sources
+name: my-db
+type: cloud-sql-postgres
+project: ${GOOGLE_CLOUD_PROJECT}
+region: ${REGION}
+instance: my-instance
+database: my_db
+user: postgres
+password: ${DB_PASSWORD}
+---
+# --- Embedding Model ---
+# Configures Toolbox to call Gemini's embedding model for vector operations.
+# Used by tools that specify `embeddedBy: gemini-embedding` on parameters.
+# Requires GOOGLE_GENAI_USE_VERTEXAI=true and GOOGLE_CLOUD_LOCATION env vars.
+kind: embeddingModels
+name: gemini-embedding
+type: gemini
+model: gemini-embedding-001
+dimension: 3072
+---
+# --- Tool 1: Keyword search ---
+kind: tools
+name: search-items
+type: postgres-sql
+source: my-db
+description: >-
+  Search items by category and/or keyword.
+  Use this when the user asks to browse by category or filter by a specific field.
+  Both parameters accept an empty string to match all values.
+statement: |
+  SELECT title, category, description, price
+  FROM items
+  WHERE ($1 = '' OR LOWER(category) = LOWER($1))
+    AND ($2 = '' OR LOWER(title) LIKE '%' || LOWER($2) || '%')
+  ORDER BY title
+  LIMIT 10
+parameters:
+  - name: category
+    type: string
+    description: "Category to filter by (e.g., 'Backend', 'Frontend'). Use empty string for all."
+  - name: keyword
+    type: string
+    description: "Keyword to search in titles. Use empty string for all."
+---
+# --- Tool 2: Get full details ---
+kind: tools
+name: get-item-details
+type: postgres-sql
+source: my-db
+description: >-
+  Get full details for a specific item by title or category name.
+  Use this when the user asks about a particular item.
+statement: |
+  SELECT title, category, description, price, details
+  FROM items
+  WHERE LOWER(title) LIKE '%' || LOWER($1) || '%'
+     OR LOWER(category) LIKE '%' || LOWER($1) || '%'
+parameters:
+  - name: search_term
+    type: string
+    description: "The title or category to look up (partial match supported)."
+---
+# --- Tool 3: Semantic search with embeddedBy ---
+# The `embeddedBy` field on the parameter tells Toolbox to:
+# 1. Intercept the raw text from the agent
+# 2. Send it to the gemini-embedding model
+# 3. Use the resulting vector in the SQL query
+# This means the agent sends plain text, but the query executes with a vector.
+kind: tools
+name: search-by-description
+type: postgres-sql
+source: my-db
+description: >-
+  Find items matching a natural language description using vector similarity.
+  Use this when the user describes what they want in natural language rather
+  than using specific keywords.
+statement: |
+  SELECT title, description,
+    1 - (embedding <=> $1) AS similarity
+  FROM items
+  WHERE embedding IS NOT NULL
+  ORDER BY embedding <=> $1
+  LIMIT 5
+parameters:
+  - name: search_query
+    type: string
+    description: "Natural language description of what the user is looking for."
+    embeddedBy: gemini-embedding
+---
+# --- Tool 4: Add item with automatic vector ingestion ---
+# The `valueFromParam` + `embeddedBy` combo enables automatic embedding on write:
+# - `valueFromParam: description` copies the description text into this parameter
+# - `embeddedBy: gemini-embedding` embeds that text into a vector
+# - The LLM never sees this parameter — Toolbox handles it transparently
+# Result: one tool call stores both raw text AND its embedding vector.
+kind: tools
+name: add-item
+type: postgres-sql
+source: my-db
+description: >-
+  Add a new item to the platform. Use this when a user asks to add
+  an item that is not currently listed.
+statement: |
+  INSERT INTO items (title, category, description, price, embedding)
+  VALUES ($1, $2, $3, $4, $5)
+  RETURNING title, category
+parameters:
+  - name: title
+    type: string
+    description: "The item title."
+  - name: category
+    type: string
+    description: "The category."
+  - name: description
+    type: string
+    description: "A short description (2-3 sentences)."
+  - name: price
+    type: string
+    description: "The price."
+  - name: description_vector
+    type: string
+    description: "Auto-generated embedding vector for the description."
+    valueFromParam: description
+    embeddedBy: gemini-embedding
