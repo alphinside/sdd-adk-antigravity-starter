@@ -22,22 +22,22 @@ toolbox_client = ToolboxSyncClient(TOOLBOX_URL)
 toolbox_tools = toolbox_client.load_toolset()
 
 
-async def save_dietary_preference(preference: str, ctx: ToolContext) -> str:
+async def save_dietary_preference(tool_context: ToolContext, preference: str) -> str:
     """Save a dietary preference for the current user.
 
     Args:
         preference: The dietary preference to save (e.g., "vegetarian", "gluten-free").
     """
-    preferences = ctx.state.get("dietary_preferences", [])
+    preferences = tool_context.state.get("dietary_preferences", [])
     if preference not in preferences:
         preferences.append(preference)
-        ctx.state["dietary_preferences"] = preferences
+        tool_context.state["dietary_preferences"] = preferences
     return f"Saved dietary preference: {preference}. Current preferences: {', '.join(preferences)}"
 
 
-async def get_dietary_preferences(ctx: ToolContext) -> str:
+async def get_dietary_preferences(tool_context: ToolContext) -> str:
     """Retrieve all saved dietary preferences for the current user."""
-    preferences = ctx.state.get("dietary_preferences", [])
+    preferences = tool_context.state.get("dietary_preferences", [])
     if not preferences:
         return "No dietary preferences saved yet."
     return f"Current dietary preferences: {', '.join(preferences)}"
