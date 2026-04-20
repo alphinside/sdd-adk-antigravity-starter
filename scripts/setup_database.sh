@@ -94,11 +94,13 @@ echo ""
 
 # --- Step 5: Seed database ---
 echo "[5/6] Seeding database and generating embeddings..."
-uv run python seed_db.py
+uv run scripts/seed_db.py
 echo "      ✓ Database seeded with embeddings"
 
 # --- Step 6: Run the MCP toolbox
-
+echo "[6/6] Running MCP Toolbox..."
+npx -y @toolbox-sdk/server --config tools.yaml
+echo "      ✓ MCP Toolbox running"
 
 echo ""
 echo "================================================"

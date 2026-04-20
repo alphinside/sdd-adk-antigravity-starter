@@ -2349,7 +2349,7 @@ requires-dist = [
     { name = "cloud-sql-python-connector", extras = ["pg8000"], specifier = ">=1.0.0" },
     { name = "google-adk", specifier = ">=1.0.0" },
     { name = "google-genai", specifier = ">=1.0.0" },
-    { name = "toolbox-core", specifier = ">=0.1.0" },
+    { name = "toolbox-core", specifier = ">=1.0.0" },
     { name = "uvicorn", specifier = ">=0.30.0" },
 ]
 
@@ -2473,7 +2473,7 @@ wheels = [
 
 [[package]]
 name = "toolbox-core"
-version = "0.5.9"
+version = "1.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -2482,9 +2482,9 @@ dependencies = [
     { name = "pydantic" },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/90/a7/ba3effadeb5c42262e66e0951f60ef1eabd36c696b84ff1741f6f1ee6f6a/toolbox_core-0.5.9.tar.gz", hash = "sha256:01a42594a0140beebe55954f1315156db0931f70dbc63a18d10d3dc2cda05003", size = 62975, upload-time = "2026-02-16T12:31:58.453Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/fc/5c/599a13fb527bda261b276f3b6d60a10c24eac433f0ac1c6100f596b9f925/toolbox_core-1.0.0.tar.gz", hash = "sha256:4da19c19797b15ffddfd2526be191ec084549348abef01c91738e6da174b0825", size = 52775, upload-time = "2026-03-25T12:50:18.35Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ca/72/53178d30cfdb72e9e0cf42496c1716705c955c649d292439834e65358fe9/toolbox_core-0.5.9-py3-none-any.whl", hash = "sha256:9181b841a5ce388125e8d2ecbf70fb4b44f0c0de8e77edcca5882a7078a57163", size = 50914, upload-time = "2026-02-16T12:31:57.08Z" },
+    { url = "https://files.pythonhosted.org/packages/d8/86/6685bcce748cb27dc8a0cf5e5abe207081fadc0c31d81de31fe81dfc52db/toolbox_core-1.0.0-py3-none-any.whl", hash = "sha256:f181c33a1b3ac4189794036b9d36b192b2f0c405f947df09fa1aed83e4e1dc67", size = 51011, upload-time = "2026-03-25T12:50:17.108Z" },
 ]
 
 [[package]]
