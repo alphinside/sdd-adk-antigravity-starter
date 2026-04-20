@@ -1,7 +1,8 @@
-"""Seed the restaurant database with schema and initial menu data.
+"""Seed the restaurant database with schema, menu data, and embeddings.
 
 Uses cloud-sql-python-connector to connect directly to Cloud SQL
-without needing Cloud SQL Auth Proxy or psql.
+without needing Cloud SQL Auth Proxy or psql. Generates embeddings
+using Cloud SQL's built-in embedding() function via google_ml_integration.
 """
 
 import os
@@ -10,24 +11,22 @@ import pg8000
 
 
 def get_connection():
-    """Create a connection to Cloud SQL using the Python connector."""
     connector = Connector()
     project = os.environ["GOOGLE_CLOUD_PROJECT"]
-    region = os.environ.get("REGION", "us-central1")
+    region = os.environ.get("REGION")
     instance_connection = f"{project}:{region}:restaurant-db"
 
     conn = connector.connect(
         instance_connection,
         "pg8000",
         user="postgres",
-        password=os.environ.get("DB_PASSWORD", "codelabpassword"),
+        password=os.environ.get("DB_PASSWORD"),
         db="restaurant_db",
     )
     return conn
 
 
 def create_schema(cursor):
-    """Create the database schema."""
     print("Creating extensions...")
     cursor.execute("CREATE EXTENSION IF NOT EXISTS vector;")
     cursor.execute("CREATE EXTENSION IF NOT EXISTS google_ml_integration;")
@@ -48,7 +47,6 @@ def create_schema(cursor):
 
 
 def seed_menu(cursor):
-    """Insert seed menu data."""
     menu_items = [
         (
             "Truffle Mushroom Bruschetta",
@@ -164,14 +162,13 @@ def seed_menu(cursor):
         ),
     ]
 
-    # Check if data already exists
     cursor.execute("SELECT COUNT(*) FROM menu_items")
     count = cursor.fetchone()[0]
     if count > 0:
-        print(f"Menu already has {count} items — skipping seed data.")
-        return
+        print(f"      Menu already has {count} items — skipping seed data.")
+        return count
 
-    print(f"Inserting {len(menu_items)} menu items...")
+    print(f"      Inserting {len(menu_items)} menu items...")
     for name, category, description, price, tags in menu_items:
         cursor.execute(
             """INSERT INTO menu_items (name, category, description, price, dietary_tags)
@@ -179,7 +176,25 @@ def seed_menu(cursor):
             (name, category, description, price, tags),
         )
 
-    print(f"Seeded {len(menu_items)} menu items.")
+    print(f"      ✓ Inserted {len(menu_items)} menu items")
+    return len(menu_items)
+
+
+def generate_embeddings(cursor):
+    cursor.execute("SELECT COUNT(*) FROM menu_items WHERE embedding IS NULL")
+    pending = cursor.fetchone()[0]
+
+    if pending == 0:
+        print("      All menu items already have embeddings.")
+        return
+
+    print(f"      Generating embeddings for {pending} menu items...")
+    cursor.execute("""
+        UPDATE menu_items
+        SET embedding = embedding('gemini-embedding-001', description)::vector
+        WHERE embedding IS NULL
+    """)
+    print(f"      ✓ Generated {cursor.rowcount} embeddings")
 
 
 def main():
@@ -188,8 +203,11 @@ def main():
 
     create_schema(cursor)
     seed_menu(cursor)
-
     conn.commit()
+
+    generate_embeddings(cursor)
+    conn.commit()
+
     cursor.close()
     conn.close()
     print("Done.")
