@@ -80,9 +80,9 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Use standard REST/GraphQL patterns
    - Output OpenAPI/GraphQL schema to `/contracts/`
 
-3. **Project context update** → `.agent/rules/project-context.md`:
+3. **Project context update** → `.agents/rules/project-context.md`:
    
-   Update or create `.agent/rules/project-context.md` using the template at `.specify/templates/project-context-template.md`.
+   Update or create `.agents/rules/project-context.md` using the template at `.specify/templates/project-context-template.md`.
    
    **Update rules**:
    - If file doesn't exist, create from template with information from this feature
@@ -95,7 +95,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Preserve content between `<!-- MANUAL ADDITIONS START -->` and `<!-- MANUAL ADDITIONS END -->`
    - For Project Identity, only fill if empty (don't overwrite existing values)
 
-**Output**: data-model.md, /contracts/*, quickstart.md, .agent/rules/project-context.md
+**Output**: data-model.md, /contracts/*, quickstart.md, .agents/rules/project-context.md
 
 ## Key rules
 
