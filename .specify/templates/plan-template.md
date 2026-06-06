@@ -31,11 +31,9 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-- [ ] **Spec-Driven**: Does this feature begin with a clear, approved specification?
-- [ ] **AI-First**: Does the design rely on ADK endpoints rather than duplicating logic in the UI?
-- [ ] **Separation**: Is the API contract between frontend and backend clearly defined?
-- [ ] **Verification**: Are there independent validation steps planned for ADK components before UI integration?
-- [ ] **Observability**: Are we using structured logging or ADK tracing for new agent capabilities?
+- [ ] **Unified Tech Stack**: Does this service use FastAPI for web services and Cloud SQL (PostgreSQL) for the database?
+- [ ] **Shift-Left Testing**: Are tests written using pytest *before* implementation for all new endpoints?
+- [ ] **BDD Specifications**: Does the feature specification follow Behavior-Driven Development (BDD) principles (Given/When/Then)?
 
 ## Project Structure
 

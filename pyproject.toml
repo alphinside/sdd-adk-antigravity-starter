@@ -9,4 +9,8 @@ dependencies = [
     "google-genai>=1.0.0",
     "cloud-sql-python-connector[pg8000]>=1.0.0",
     "uvicorn>=0.30.0",
+    "antigravity>=0.1",
+    "pytest>=9.0.3",
+    "httpx>=0.28.1",
+    "greenlet",
 ]
