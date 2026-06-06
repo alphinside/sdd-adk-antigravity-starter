@@ -1,0 +1,170 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Table Reservation API",
+    "version": "1.0.0",
+    "description": "API for creating and listing table reservations."
+  },
+  "paths": {
+    "/reservations": {
+      "post": {
+        "summary": "Create a reservation",
+        "operationId": "create_reservation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReservationCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Reservation created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reservation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or capacity exceeded"
+          }
+        }
+      },
+      "get": {
+        "summary": "List all reservations",
+        "operationId": "list_reservations",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of reservations retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Reservation"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid API Key"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-KEY"
+      }
+    },
+    "schemas": {
+      "ReservationCreate": {
+        "type": "object",
+        "required": [
+          "customer_name",
+          "email",
+          "phone",
+          "party_size",
+          "reservation_date",
+          "reservation_time"
+        ],
+        "properties": {
+          "customer_name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "john.doe@example.com"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+15551234567"
+          },
+          "party_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20,
+            "example": 4
+          },
+          "reservation_date": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-06-10"
+          },
+          "reservation_time": {
+            "type": "string",
+            "example": "19:00:00"
+          }
+        }
+      },
+      "Reservation": {
+        "type": "object",
+        "required": [
+          "id",
+          "customer_name",
+          "email",
+          "phone",
+          "party_size",
+          "reservation_date",
+          "reservation_time",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "customer_name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "john.doe@example.com"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+15551234567"
+          },
+          "party_size": {
+            "type": "integer",
+            "example": 4
+          },
+          "reservation_date": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-06-10"
+          },
+          "reservation_time": {
+            "type": "string",
+            "example": "19:00:00"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-06-06T20:40:00Z"
+          }
+        }
+      }
+    }
+  }
+}

@@ -18,3 +18,12 @@ __pycache__/
 # Toolbox binary
 toolbox
 
+# Common Python
+venv/
+dist/
+*.egg-info/
+
+# Universal
+Thumbs.db
+*.tmp
+*.swp

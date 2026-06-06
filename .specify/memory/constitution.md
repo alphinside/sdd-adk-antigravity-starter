@@ -1,50 +1,45 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+=== SYNC IMPACT REPORT ===
+Version change: 0.0.0 -> 1.0.0
+List of modified principles:
+  - N/A (Initial ratification of 3 new principles)
+Added sections:
+  - Core Principles (I. Unified Tech Stack, II. Shift-Left Testing, III. Behavior-Driven Development)
+  - Development Quality Standards
+  - Workflow & Release Guidelines
+Removed sections:
+  - N/A (Placeholders replaced)
+Templates requiring updates:
+  - .specify/templates/plan-template.md (✅ updated)
+  - .specify/templates/tasks-template.md (✅ updated)
+Follow-up TODOs:
+  - None
+==========================
+-->
+
+# Restaurant Concierge Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Unified Tech Stack (FastAPI & Cloud SQL)
+FastAPI MUST be used for developing all web services. Cloud SQL (PostgreSQL dialect) MUST be used as the central database.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Shift-Left Testing (pytest)
+All new endpoints MUST have automated tests written using `pytest` before the implementation begins. Tests must be validated to fail first, then implementation must proceed to make them pass.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Behavior-Driven Development (BDD)
+Feature specifications MUST follow Behavior-Driven Development principles (e.g., Given/When/Then style format) to define acceptance criteria and clear user scenarios before implementation begins.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+## Development Quality Standards
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+All code modifications must run clean of lint errors and satisfy existing workspace guidelines. Complexity must be minimized and justified where necessary.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Workflow & Release Guidelines
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
-
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
-
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+Build and test execution commands must be verified locally before pushing to origin. The specify -> plan -> tasks -> implement workflow cycle must be followed.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution is the single source of truth for repository structure and quality gates. Amendments to these principles require team consensus, updating this document, and an increment to the constitution version. Compliance must be checked in all feature planning phases.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-06-05 | **Last Amended**: 2026-06-05

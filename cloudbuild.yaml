@@ -1,0 +1,29 @@
+steps:
+  # 1. Build the minimal secure container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/fastapi-app:$COMMIT_SHA', '.']
+
+  # 2. Push the built container image to Google Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/fastapi-app:$COMMIT_SHA']
+
+  # 3. Deploy revision to Cloud Run with dynamic Secret Manager injection
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'fastapi-app'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/fastapi-app:$COMMIT_SHA'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--port'
+      - '8080'
+      - '--set-secrets=DB_USER=DB_USER:latest,DB_PASSWORD=DB_PASSWORD:latest,DB_HOST=DB_HOST:latest,DB_NAME=DB_NAME:latest'
+
+images:
+  - 'gcr.io/$PROJECT_ID/fastapi-app:$COMMIT_SHA'

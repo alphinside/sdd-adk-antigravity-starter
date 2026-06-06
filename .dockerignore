@@ -1,0 +1,27 @@
+# Git and Docker metadata
+.git
+.gitignore
+.dockerignore
+Dockerfile
+cloudbuild.yaml
+
+# Virtual Environments & Python Cache
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Local databases and logs
+*.db
+*.log
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
